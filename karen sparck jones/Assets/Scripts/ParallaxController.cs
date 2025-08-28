@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class ParallaxController : MonoBehaviour
 {
-    public float parallaxSpeed = 2f;   // velocidade do movimento
-    public float layerMultiplier = 1f; // multiplicador para dar efeito em diferentes layers
+    public float moveSpeed = 2f;       // velocidade do movimento
+    public float layerMultiplier = 1f; // profundidade/parallax
 
-    [Header("Limites de Movimento")]
-    public float minX = -5f;  // limite esquerdo
-    public float maxX = 5f;   // limite direito
+    [Header("Pontas do Parallax")]
+    public Transform pontaEsquerda;    // objeto vazio no canto esquerdo do parallax
+    public Transform pontaDireita;     // objeto vazio no canto direito do parallax
 
-    private Vector3 startPos;
-
-    void Start()
-    {
-        startPos = transform.position;
-    }
+    [Header("Limites da Cena")]
+    public Transform limiteEsquerdo;   // limite fixo esquerdo
+    public Transform limiteDireito;    // limite fixo direito
 
     void Update()
     {
@@ -22,18 +19,28 @@ public class ParallaxController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A))
         {
-            moveX = parallaxSpeed * layerMultiplier * Time.deltaTime;
+            moveX = moveSpeed * layerMultiplier * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            moveX = -parallaxSpeed * layerMultiplier * Time.deltaTime;
+            moveX = -moveSpeed * layerMultiplier * Time.deltaTime;
         }
 
-        // aplica o movimento
+        // calcula a posição nova
         Vector3 newPos = transform.position + new Vector3(moveX, 0f, 0f);
 
-        // limita o movimento no eixo X
-        newPos.x = Mathf.Clamp(newPos.x, startPos.x + minX, startPos.x + maxX);
+        // impede de ultrapassar os limites
+        float esquerda = pontaEsquerda.position.x + (newPos.x - transform.position.x);
+        float direita = pontaDireita.position.x + (newPos.x - transform.position.x);
+
+        if (esquerda < limiteEsquerdo.position.x)
+        {
+            newPos.x = transform.position.x + (limiteEsquerdo.position.x - pontaEsquerda.position.x);
+        }
+        else if (direita > limiteDireito.position.x)
+        {
+            newPos.x = transform.position.x + (limiteDireito.position.x - pontaDireita.position.x);
+        }
 
         transform.position = newPos;
     }
