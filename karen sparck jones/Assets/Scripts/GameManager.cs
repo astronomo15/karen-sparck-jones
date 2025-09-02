@@ -19,6 +19,12 @@ public class GameManager : MonoBehaviour
     private int botoesClicados = 0;
     private bool[] botoesJaClicados;
 
+    [Header("Objeto a ser desativado")]
+    public GameObject objetoParaDesativar; // você escolhe no Inspector
+
+    [Header("Cenas")]
+    public string nomeCenaMenu; // coloque aqui no Inspector o nome da cena do menu
+
     private bool jogoAcabou = false;
 
     void Start()
@@ -76,19 +82,37 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         jogoAcabou = true;
-        timerText.gameObject.SetActive(false); // some com o timer
+        timerText.gameObject.SetActive(false); 
         gameOverPanel.SetActive(true);
+
+        if (objetoParaDesativar != null)
+            objetoParaDesativar.SetActive(false);
     }
 
     void Venceu()
     {
         jogoAcabou = true;
-        timerText.gameObject.SetActive(false); // some com o timer também na vitória
+        timerText.gameObject.SetActive(false);
         winPanel.SetActive(true);
+
+        if (objetoParaDesativar != null)
+            objetoParaDesativar.SetActive(false);
     }
 
     public void Reiniciar()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void VoltarMenu()
+    {
+        if (!string.IsNullOrEmpty(nomeCenaMenu))
+        {
+            SceneManager.LoadScene(nomeCenaMenu);
+        }
+        else
+        {
+            Debug.LogWarning("Nome da cena do menu não foi definido no Inspector!");
+        }
     }
 }
