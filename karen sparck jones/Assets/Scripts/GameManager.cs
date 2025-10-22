@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             botoesJaClicados[index] = true;
             botoesClicados++;
 
-            if (botoesClicados >= 5)
+            if (botoesClicados >= 8)
             {
                 Venceu();
             }
